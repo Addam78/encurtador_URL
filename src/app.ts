@@ -1,8 +1,8 @@
 import fastify from 'fastify'
-import prisma from '../src/ib/prisma'
+import { prisma } from './lib/prisma'
 import { generateShortCode } from './shortCode'
 const app = fastify()
-
+import "dotenv/config"
 const port = 3000
 
 
