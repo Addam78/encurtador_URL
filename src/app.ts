@@ -28,11 +28,28 @@ app.post('/url',async(req,reply)=>{
     }
   });
 
-  return reply.send(createdUrl)
+  return reply.send(`http://localhost:3000/${shortCode}`)
+
 
 
   
 })
+
+
+app.get('/:shortCode',async(req,reply)=>{
+  const {shortCode} = req.params as {shortCode: string}
+
+  let urlcompleta = await prisma.url.findUnique({
+    where:{shortCode}
+  })
+
+  if(!urlcompleta){
+    return  reply.status(404).send('Url não encontrada , primeiro é encesssario gerar ')
+  }
+
+  return reply.redirect(urlcompleta.originalUrl)
+})
+
 
 app.listen({ port: port }, function (err, address) {
   if (err) {
