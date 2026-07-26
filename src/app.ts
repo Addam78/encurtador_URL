@@ -18,6 +18,14 @@ app.post('/url',async(req,reply)=>{
     return reply.send('A url não pode ser vazia')
   }
 
+  const urlunica = await prisma.url.findFirst({
+      where:{originalUrl}
+  })
+
+  if(urlunica){
+    return reply.send(`Já existe um encurtador para essa url: http://localhost:3000/${urlunica.shortCode}`)
+  }
+
   // no meu banco a url reduzida recebe a função reduzida
  const shortCode = generateShortCode()
 
@@ -46,6 +54,8 @@ app.get('/:shortCode',async(req,reply)=>{
   if(!urlcompleta){
     return  reply.status(404).send('Url não encontrada , primeiro é encesssario gerar ')
   }
+
+  
 
   return reply.redirect(urlcompleta.originalUrl)
 })
