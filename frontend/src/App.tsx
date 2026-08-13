@@ -3,26 +3,13 @@ import { ShortenForm } from './components/ShortenForm'
 import { ResultCard } from './components/ResultCard'
 import { CachePanel } from './components/CachePanel'
 import { ThemeToggle } from './components/ThemeToggle'
-import { LinkHistory } from './components/LinkHistory'
-import { carregarHistorico, registrarLink } from './lib/historico'
+import { CacheAsideFlow } from './components/CacheAsideFlow'
 import type { ShortenResult } from './lib/api'
 
 const API_ORIGIN = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 export function App() {
   const [result, setResult] = useState<ShortenResult | null>(null)
-  const [links, setLinks] = useState(carregarHistorico)
-
-  function aoCriar(novo: ShortenResult) {
-    setResult(novo)
-    setLinks((atual) =>
-      registrarLink(atual, {
-        shortUrl: novo.shortUrl,
-        originalUrl: novo.originalUrl,
-        criadoEm: Date.now(),
-      }),
-    )
-  }
 
   return (
     <div className="min-h-dvh">
@@ -45,20 +32,24 @@ export function App() {
 
       <main className="mx-auto max-w-5xl px-6 py-12">
         <div className="max-w-xl">
-          <h2 className="text-3xl leading-tight font-semibold tracking-tight text-ink dark:text-ink-dark">
-            Encurte um link e acompanhe o cache respondendo por ele.
+          <p className="font-mono text-xs tracking-widest text-muted uppercase dark:text-muted-dark">
+            Estudo de arquitetura · padrão cache-aside
+          </p>
+          <h2 className="mt-3 text-3xl leading-tight font-semibold tracking-tight text-ink dark:text-ink-dark">
+            Encurtar links é o pretexto. O objeto de estudo é o cache.
           </h2>
           <p className="mt-3 text-muted dark:text-muted-dark">
-            Fastify na frente, MySQL como fonte de verdade e Redis à frente das leituras. O painel ao
-            lado mostra quanto do tráfego de redirect o Redis está absorvendo.
+            Fastify na frente, MySQL como fonte de verdade e Redis à frente das leituras. Crie um
+            link, abra ele algumas vezes e acompanhe ao lado quanto do tráfego o Redis absorve antes
+            do banco ser consultado.
           </p>
         </div>
 
         <div className="mt-10 grid gap-10 md:grid-cols-2">
           <section className="space-y-6">
-            <ShortenForm onResult={aoCriar} />
+            <ShortenForm onResult={setResult} />
             {result && <ResultCard result={result} />}
-            <LinkHistory links={links} />
+            <CacheAsideFlow />
           </section>
 
           <CachePanel />
