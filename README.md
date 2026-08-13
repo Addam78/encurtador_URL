@@ -72,6 +72,10 @@ yarn dev
 
 SPA em React + Vite + Tailwind, servida em `http://localhost:5173`. Existe por um motivo só: **tornar o cache-aside observável**. Ela mostra ao vivo, lendo `/stats` a cada 3s, quantos redirects o Redis absorveu e quantos precisaram do MySQL — o mesmo número que o `stress.sh` imprime, só que enquanto você usa o sistema.
 
+![Painel do encurtador: formulário de encurtamento à esquerda e medidor de cache hit à direita, mostrando 12 de 15 redirects respondidos pelo Redis](docs/estilo_dark.jpg)
+
+À esquerda, criar o link e o caminho que uma requisição percorre. À direita, o medidor: cada bloco verde é uma fatia dos redirects que o Redis respondeu sem consultar o MySQL — na captura, 12 de 15. O botão no cabeçalho alterna entre tema claro e escuro.
+
 Em desenvolvimento o Vite faz proxy de `/url` e `/stats` para a porta 3000, então CORS não entra em jogo. Pra publicar em outra origem, defina:
 
 - `VITE_API_URL` no front — origem da API
@@ -84,6 +88,8 @@ Com o servidor rodando, a documentação interativa da API fica em:
 ```
 http://localhost:3000/docs
 ```
+
+![Swagger UI do projeto listando as rotas GET /metrics, GET /stats, GET /{shortCode} e POST /url](docs/doc_swagger.jpg)
 
 > **Nota sobre a rota `GET /:shortCode`:** ela é o próprio link encurtado (funciona como um bit.ly), então não dá pra testar pelo botão "Try it out" do Swagger — o navegador bloqueia por CORS o `fetch` seguir um redirect para um domínio externo. Para testar esse endpoint, copie a "Request URL" e cole direto na barra de endereço do navegador, ou use `curl -i`.
 
