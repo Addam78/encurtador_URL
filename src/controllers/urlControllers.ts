@@ -28,10 +28,14 @@ export const urlControllers = {
 
   async create(req:FastifyRequest, reply:FastifyReply){
     const {originalUrl,expiresAt} = req.body as {originalUrl:string; expiresAt?: Date}
-  
+
      if(!originalUrl){
-    return reply.send('A url não pide ser vazia')
-  } 
+    return reply.status(400).send('A url não pide ser vazia')
+  }
+
+  if(expiresAt && new Date(expiresAt) < new Date()){
+    return reply.status(400).send('A data de expiração não pode ser anterior à data atual')
+  }
 
   const existente = await
   urlServices.findExistingShortCode(originalUrl)

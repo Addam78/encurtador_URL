@@ -46,6 +46,16 @@ yarn install
 yarn dev
 ```
 
+## Documentação (Swagger)
+
+Com o servidor rodando, a documentação interativa da API fica em:
+
+```
+http://localhost:3000/docs
+```
+
+> **Nota sobre a rota `GET /:shortCode`:** ela é o próprio link encurtado (funciona como um bit.ly), então não dá pra testar pelo botão "Try it out" do Swagger — o navegador bloqueia por CORS o `fetch` seguir um redirect para um domínio externo. Para testar esse endpoint, copie a "Request URL" e cole direto na barra de endereço do navegador, ou use `curl -i`.
+
 Criar uma URL:
 ```bash
 curl -X POST http://localhost:3000/url -H "Content-Type: application/json" -d "{\"originalUrl\":\"https://exemplo.com\"}"
@@ -66,9 +76,20 @@ Rodar o teste de carga:
 bash stress.sh SEUCODE 200
 ```
 
+## Arquitetura em camadas
+
+O código em `src/` está separado em:
+
+- `routes/` — liga cada rota HTTP ao controller correspondente
+- `controllers/` — recebem `req`/`reply`, chamam o service e traduzem o resultado em resposta HTTP
+- `services/` — regra de negócio (geração de shortCode único, checagem de expiração, orquestração entre cache e banco)
+- `repositories/` — acesso a dados (`urlRepository` para MySQL/Prisma, `urlCacheRepository` para Redis)
+- `errors/` — erros customizados (`NotFoundError`, `ExpiredError`) com `statusCode` próprio, lidos genericamente pelos controllers
+
 ## Roadmap (em andamento)
 
 - [ ] Trocar a geração de código curto (atualmente `nanoid`)
-- [ ] Separar o projeto em camadas (rotas / serviços / repositório), hoje tudo está concentrado em `app.ts`
 - [ ] Testes automatizados
 - [ ] Dashboard no Grafana para as métricas de cache hit/miss
+- [ ] Frontend (SPA em React + Vite)
+- [ ] Serviço de email (enviar o link encurtado por email)
