@@ -10,6 +10,7 @@ export type CacheStats = {
 
 export type ShortenResult = {
   shortUrl: string
+  originalUrl: string
   /** true quando a API devolveu um encurtador que já existia para essa URL */
   reused: boolean
 }
@@ -65,7 +66,7 @@ export async function shortenUrl(originalUrl: string, expiresAt?: string): Promi
     throw new ApiError(text || 'A API respondeu sem um link.')
   }
 
-  return { shortUrl: match[0], reused: text.startsWith('Já existe') }
+  return { shortUrl: match[0], originalUrl, reused: text.startsWith('Já existe') }
 }
 
 export async function fetchStats(): Promise<CacheStats> {

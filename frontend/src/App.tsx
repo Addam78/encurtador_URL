@@ -3,12 +3,26 @@ import { ShortenForm } from './components/ShortenForm'
 import { ResultCard } from './components/ResultCard'
 import { CachePanel } from './components/CachePanel'
 import { ThemeToggle } from './components/ThemeToggle'
+import { LinkHistory } from './components/LinkHistory'
+import { carregarHistorico, registrarLink } from './lib/historico'
 import type { ShortenResult } from './lib/api'
 
 const API_ORIGIN = import.meta.env.VITE_API_URL ?? 'http://localhost:3000'
 
 export function App() {
   const [result, setResult] = useState<ShortenResult | null>(null)
+  const [links, setLinks] = useState(carregarHistorico)
+
+  function aoCriar(novo: ShortenResult) {
+    setResult(novo)
+    setLinks((atual) =>
+      registrarLink(atual, {
+        shortUrl: novo.shortUrl,
+        originalUrl: novo.originalUrl,
+        criadoEm: Date.now(),
+      }),
+    )
+  }
 
   return (
     <div className="min-h-dvh">
@@ -42,17 +56,14 @@ export function App() {
 
         <div className="mt-10 grid gap-10 md:grid-cols-2">
           <section className="space-y-6">
-            <ShortenForm onResult={setResult} />
+            <ShortenForm onResult={aoCriar} />
             {result && <ResultCard result={result} />}
+            <LinkHistory links={links} />
           </section>
 
           <CachePanel />
         </div>
       </main>
-
-      <footer className="mx-auto max-w-5xl px-6 pb-10 font-mono text-xs text-muted dark:text-muted-dark">
-        API em {API_ORIGIN}
-      </footer>
     </div>
   )
 }
