@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+/* O tema é controlado pelo atributo data-theme no <html>, escrito pelo
+   script inline do index.html e pelo botão do cabeçalho. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* neutro frio "papel técnico" */
+  --color-paper: #f1f2f4;
+  --color-surface: #ffffff;
+  --color-hairline: #dcdee3;
+  --color-ink: #16181d;
+  --color-muted: #6b7180;
+
+  /* acento único + verde reservado só para a camada de cache */
+  --color-accent: #2b3af3;
+  --color-cache: #12805c;
+
+  /* tema escuro */
+  --color-paper-dark: #101216;
+  --color-surface-dark: #171a20;
+  --color-hairline-dark: #282c35;
+  --color-ink-dark: #e8eaef;
+  --color-muted-dark: #8b92a1;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html[data-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+
+  html[data-theme='dark'] body {
+    @apply bg-paper-dark text-ink-dark;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
